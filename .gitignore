@@ -24,3 +24,6 @@
 .phpunit
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+*.lock
+.idea

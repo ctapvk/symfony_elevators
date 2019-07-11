@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Houses{% endblock %}
+
+{% block body %}
+    <div class="pT-60"></div>
+    <h1>{{ house.name }}</h1>
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ house.id }}</td>
+        </tr>
+        <tr>
+            <th>Название</th>
+            <td>{{ house.name }}</td>
+        </tr>
+        <tr>
+            <th>Этажи</th>
+            <td>{{ house.floors }}</td>
+        </tr>
+        <tr>
+            <th>Лифтов</th>
+            <td>{{ elevators|length }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('houses_index') }}">back to list</a>
+
+    <a href="{{ path('houses_edit', {'id': house.id}) }}">edit</a>
+
+    {{ include('houses/_delete_form.html.twig') }}
+
+
+    <hr>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <form class="ui form" action="{{ house.id }}/call" method="post">
+                <input type="hidden" name="token" value="{{ csrf_token('myform') }}"/>
+                Выберите этаж:
+                <select name="floor" id="">
+                    {% for i in range(1, house.floors) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+                <button class="ui button" type="submit">Вызвать лифт</button>
+            </form>
+
+        </div>
+    </div>
+
+
+    <h2>Лифты :</h2>
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>Название</th>
+            <th>Состояение</th>
+            <th>На каком этаже сейчас</th>
+        </tr>
+        {% for elevator in  elevators %}
+            <tr>
+                <td>{{ elevator.name }}</td>
+                <td>{{ elevator.status }}</td>
+                <td>{{ elevator.position }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

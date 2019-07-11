@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Дома{% endblock %}
+
+{% block body %}
+    <h1 class="pT-60">Дома</h1>
+
+    <div class="count">
+        Всего : {{ pagination.getTotalItemCount }}
+        <a href="{{ path('houses_new') }}" class="btn btn-primary">Добавить </a>
+    </div>
+    <table class="table">
+        <tr>
+            {# sorting of properties based on query components #}
+            <th>{{ knp_pagination_sortable(pagination, 'Id', 'a.id') }}</th>
+            <th{% if pagination.isSorted('a.name') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'name', 'a.name') }}</th>
+            <th{% if pagination.isSorted('a.Floors') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Floors', 'a.Floors') }}</th>
+            <th>actions</th>
+        </tr>
+
+        {# table body #}
+        {% for house in pagination %}
+            <tr>
+                <td>{{ house.id }}</td>
+                <td>{{ house.name }}</td>
+                <td>{{ house.floors }}</td>
+                <td>
+                    <a href="{{ path('houses_show', {'id': house.id}) }}">show</a>
+                    <a href="{{ path('houses_edit', {'id': house.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+{% endblock %}

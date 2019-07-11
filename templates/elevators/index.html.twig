@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Elevators index{% endblock %}
+
+{% block body %}
+    <h1>Elevators index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Position</th>
+                <th>house</th>
+                <th>этажей в доме</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for elevator in elevators %}
+            <tr>
+                <td>{{ elevator.id }}</td>
+                <td>{{ elevator.name }}</td>
+                <td>{{ elevator.status }}</td>
+                <td>{{ elevator.position }}</td>
+                <td>{{ elevator.house.name }}</td>
+                <td>{{ elevator.house.floors }}</td>
+                <td>
+                    <a href="{{ path('elevators_show', {'id': elevator.id}) }}">show</a>
+                    <a href="{{ path('elevators_edit', {'id': elevator.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('elevators_new') }}">Create new</a>
+{% endblock %}
