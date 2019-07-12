@@ -53,10 +53,16 @@ class MoveToFirstCommand extends ContainerAwareCommand
 
             $res = array_map(function (Houses $house) use ($em, $callsContorller) {
                 echo date("U") . "test \n";
-                $res = $callsContorller->createNewCall($house, 1, $em);
-                if ($res) {
-                    $name = $res->getName();
-                    echo "called elevator $name to first floor";
+                $need_to_call = true;
+                foreach ($house->getElevators()->getValues() as $v) {
+                    if ($v->getPosition() == 1) $need_to_call = false;
+                }
+                if ($need_to_call) {
+                    $res = $callsContorller->createNewCall($house, 1, $em);
+                    if ($res) {
+                        $name = $res->getName();
+                        echo "called elevator $name to first floor";
+                    }
                 }
             }, $res);
             $em->flush();
