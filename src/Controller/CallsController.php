@@ -9,9 +9,10 @@ use App\Entity\Houses;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-class CallsController
+class CallsController extends AbstractController
 {
     /**
      * @param Houses $house
@@ -28,7 +29,7 @@ class CallsController
         }
         $elevator = $this->findClosestElevator(array_values($free_elevators), $floor);
         $em->beginTransaction();
-        $em->lock($elevator, LockMode::PESSIMISTIC_WRITE);
+        $em->lock($elevator, LockMode::PESSIMISTIC_READ);
         $elevator->setStatus(Elevators::ELEVATOR_MOVING);
         $em->persist($elevator);
 
@@ -39,13 +40,18 @@ class CallsController
         $call->setStatus(Calls::CALL_STARTED);
         $em->persist($call);
 
+        $house->setLastCallAt(new \DateTimeImmutable());
+        $em->persist($house);
+
         $em->flush();
+        $em->lock($elevator, LockMode::NONE);
         $em->commit();
+        $em->clear();
         return $elevator;
     }
 
 
-    function findClosestElevator(array $ar, int $floor): Elevators
+    private function findClosestElevator(array $ar, int $floor): Elevators
     {
         $diff = [];
         foreach ($ar as $v) {

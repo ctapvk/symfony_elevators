@@ -42,7 +42,7 @@ class ProcessCommand extends ContainerAwareCommand
         $em = $this->getManager();
 
         while (true) {
-            echo date("U") . "test \n";
+            echo date("c") . " \n";
             $res = $em->getRepository('App:Calls')->createQueryBuilder('c')
                 ->andWhere('c.status = :val')
                 ->setParameter('val', Calls::CALL_STARTED)
@@ -55,9 +55,10 @@ class ProcessCommand extends ContainerAwareCommand
                 $diff = ($elevator->getPosition() - $call->getFloorTo());
                 $direction = ($diff < 0) ? 1 : -1;
                 $position = $elevator->getPosition();
-                echo $elevator->getName() . " $direction  $position \n";
+                echo $elevator->getName() . " направление:$direction этаж:$position  разница:$diff \n";
                 if ($diff == 0) {
                     $elevator->setStatus(Elevators::ELEVATOR_IDLE);
+                    $em->persist($elevator);
                     $call->setStatus(Calls::CALL_FINISHED);
                     $em->persist($call);
                 } else {
@@ -67,6 +68,7 @@ class ProcessCommand extends ContainerAwareCommand
                 $em->persist($elevator);
             }, $res);
             $em->flush();
+            $em->clear();
             sleep(2);
         }
 
@@ -76,30 +78,5 @@ class ProcessCommand extends ContainerAwareCommand
     private function getManager(): EntityManager
     {
         return $this->getContainer()->get('doctrine.orm.entity_manager');
-    }
-
-    private function moveIdleToFirstFloor()
-    {
-        $em = $this->getManager();
-        $sql = 'SELECT h.*, e.* FROM houses as h
- join elevators as e on h.id = e.house_id
- where e.status=1 and e.position!=1
- ;';
-        $statement = $em->getConnection()->prepare($sql);
-        $statement->execute();
-        $res = $statement->fetchAll();
-        print_r($res);
-
-//        $res = $em->getRepository('App:Elevators')->createQueryBuilder('c')
-//            ->andWhere('c.status = :val')
-//            ->setParameter('val', Elevators::ELEVATOR_IDLE)
-//            ->orderBy('c.id', 'ASC')
-//            ->getQuery()
-//            ->getResult();
-//        $res = array_map(function (Elevators $elevator) use ($em) {
-//            $call = $elevator->getCalls();
-//            echo $elevator->getName() . "  \n";
-//
-//        }, $res);
     }
 }

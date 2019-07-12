@@ -33,6 +33,11 @@ class Houses
      */
     private $elevators;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $last_call_at;
+
     public function __construct()
     {
         $this->elevators = new ArrayCollection();
@@ -101,6 +106,18 @@ class Houses
 
     public function __toString(){
         return $this->name;
+    }
+
+    public function getLastCallAt(): ?\DateTimeInterface
+    {
+        return $this->last_call_at;
+    }
+
+    public function setLastCallAt(?\DateTimeInterface $last_call_at): self
+    {
+        $this->last_call_at = $last_call_at;
+
+        return $this;
     }
 
 }

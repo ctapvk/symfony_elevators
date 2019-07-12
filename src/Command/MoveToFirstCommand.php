@@ -2,6 +2,10 @@
 
 namespace App\Command;
 
+use App\Controller\CallsController;
+use App\Entity\Houses;
+use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -9,7 +13,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class MoveToFirstCommand extends Command
+class MoveToFirstCommand extends ContainerAwareCommand
 {
     protected static $defaultName = 'app:move-to-first';
 
@@ -18,8 +22,7 @@ class MoveToFirstCommand extends Command
         $this
             ->setDescription('Add a short description for your command')
             ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
-        ;
+            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -34,35 +37,30 @@ class MoveToFirstCommand extends Command
         if ($input->getOption('option1')) {
             // ...
         }
+
+        $em = $this->getManager();
+        $callsContorller = new CallsController();
+
         while (true) {
-            $time =  (new \DateTimeImmutable())->modify('-5 minutes')->format("Y-m-d H:i:s");
+            $time = (new \DateTimeImmutable())->modify('-5 minutes')->format("Y-m-d H:i:s");
 
-            echo date("U") . "test $time \n";
+            $res = $em->getRepository('App:Houses')->createQueryBuilder('c')
+                ->andWhere('c.last_call_at < :val')
+                ->setParameter('val', $time)
+                ->orderBy('c.id', 'ASC')
+                ->getQuery()
+                ->getResult();
 
-//            $res = $em->getRepository('App:Houses')->createQueryBuilder('c')
-//                ->andWhere('c.updated_at = :val')
-//                ->setParameter('val',)
-//                ->orderBy('c.id', 'ASC')
-//                ->getQuery()
-//                ->getResult();
-//
-//            $res = array_map(function (Calls $call) use ($em) {
-//                $elevator = $call->getElevator();
-//                $diff = ($elevator->getPosition() - $call->getFloorTo());
-//                $direction = ($diff < 0) ? 1 : -1;
-//                $position = $elevator->getPosition();
-//                echo $elevator->getName() . " $direction  $position \n";
-//                if ($diff == 0) {
-//                    $elevator->setStatus(Elevators::ELEVATOR_IDLE);
-//                    $call->setStatus(Calls::CALL_FINISHED);
-//                    $em->persist($call);
-//                } else {
-//                    $position = $elevator->getPosition() + $direction;
-//                    $elevator->setPosition($position);
-//                }
-//                $em->persist($elevator);
-//            }, $res);
-//            $em->flush();
+            $res = array_map(function (Houses $house) use ($em, $callsContorller) {
+                echo date("U") . "test \n";
+                $res = $callsContorller->createNewCall($house, 1, $em);
+                if ($res) {
+                    $name = $res->getName();
+                    echo "called elevator $name to first floor";
+                }
+            }, $res);
+            $em->flush();
+            $em->clear();
             sleep(30);
         }
 
