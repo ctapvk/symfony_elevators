@@ -53,8 +53,18 @@ class ElevatorsController extends AbstractController
      */
     public function show(Elevators $elevator): Response
     {
+        $em = $this->container->get('doctrine')->getEntityManager();
+        $sql = 'select floor_to, count(floor_to) from calls
+ where elevator_id= ' . $elevator->getId() . ' 
+ group by floor_to
+ ;';
+        $statement = $em->getConnection()->prepare($sql);
+        $statement->execute();
+        $res = $statement->fetchAll();
+
         return $this->render('elevators/show.html.twig', [
             'elevator' => $elevator,
+            'call_statistic' => $res,
         ]);
     }
 
@@ -85,7 +95,7 @@ class ElevatorsController extends AbstractController
      */
     public function delete(Request $request, Elevators $elevator): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$elevator->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $elevator->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($elevator);
             $entityManager->flush();
