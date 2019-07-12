@@ -92,8 +92,9 @@ order by id
 
         $res = [];
         $moving = [];
+        $moving[] = $calls[0]['floor_from'];
         foreach ($calls as $v) {
-            $moving[] = $v['floor_from'];
+            $moving[] = $v['floor_to'];
         }
         return $this->sliceDirection($moving);
 
@@ -101,6 +102,8 @@ order by id
 
     public function sliceDirection($calls)
     {
+        if (count($calls) == 0) return [];
+        if (count($calls) == 1) return [$calls[0]];
         $ob = [];
         $res = [];
         $direction = $calls[0] < $calls[1] ? 'up' : 'down';

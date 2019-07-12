@@ -46,12 +46,12 @@
             <form class="ui form" action="{{ house.id }}/call" method="post">
                 <input type="hidden" name="token" value="{{ csrf_token('myform') }}"/>
                 Выберите этаж:
-                <select name="floor" id="">
+                <select name="floor" id="" class="form-control">
                     {% for i in range(1, house.floors) %}
                         <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
                 </select>
-                <button class="ui button" type="submit">Вызвать лифт</button>
+                <button class="btn btn-primary" type="submit">Вызвать лифт</button>
             </form>
 
         </div>
@@ -69,7 +69,14 @@
         {% for elevator in  elevators %}
             <tr>
                 <td>{{ elevator.name }}</td>
-                <td>{{ elevator.status }}</td>
+                <td>
+                    {% if  elevator.status==1 %}
+                        Ожидвание
+                    {% endif %}
+                    {% if  elevator.status==2 %}
+                        Движется
+                    {% endif %}
+                </td>
                 <td>{{ elevator.position }}</td>
             </tr>
         {% endfor %}

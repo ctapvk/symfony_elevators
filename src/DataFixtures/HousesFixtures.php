@@ -17,7 +17,7 @@ class HousesFixtures extends Fixture
         for ($i = 1; $i <= 100; $i++) {
             $house = new Houses();
             $house->setName("Дом № $i");
-            $house->setFloors(rand(1, 10));
+            $house->setFloors(10);
             $manager->persist($house);
         }
         $manager->flush();
@@ -31,6 +31,5 @@ class HousesFixtures extends Fixture
             $manager->persist($elevetor);
         }
         $manager->flush();
-
     }
 }
