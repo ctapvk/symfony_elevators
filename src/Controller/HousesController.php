@@ -78,10 +78,16 @@ class HousesController extends AbstractController
     /**
      * @Route("/{id}/call", name="houses_call", methods={"POST"})
      */
-    public function callAction(Houses $house, Request $request): Response
+    public function call_lift(Houses $house, Request $request): Response
     {
         if ($floor = $request->get('floor')) {
-            $this->addFlash('success', "Вы вызвали лифт на $floor этаж");
+
+            $callsContorller = new CallsController();
+            $res = $callsContorller->createNewCall($house, $floor, $this->container->get('doctrine')->getEntityManager());
+            if ($res) {
+                $name = $res->getName();
+                $this->addFlash('success', "Вы вызвали $name на $floor этаж");
+            }
         }
         return $this->redirectToRoute('houses_show', ['id' => $house->getId()]);
     }

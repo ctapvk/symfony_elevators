@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -9,6 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Elevators
 {
+    const ELEVATOR_IDLE = 1;
+    const ELEVATOR_MOVING = 2;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -35,6 +40,16 @@ class Elevators
      * @ORM\ManyToOne(targetEntity="App\Entity\Houses", inversedBy="elevators")
      */
     private $house;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Calls", mappedBy="elevator")
+     */
+    private $calls;
+
+    public function __construct()
+    {
+        $this->calls = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -98,5 +113,36 @@ class Elevators
         return $this->name;
         // to show the id of the Category in the select
         // return $this->id;
+    }
+
+    /**
+     * @return Collection|Calls[]
+     */
+    public function getCalls(): Collection
+    {
+        return $this->calls;
+    }
+
+    public function addCall(Calls $call): self
+    {
+        if (!$this->calls->contains($call)) {
+            $this->calls[] = $call;
+            $call->setElevator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCall(Calls $call): self
+    {
+        if ($this->calls->contains($call)) {
+            $this->calls->removeElement($call);
+            // set the owning side to null (unless already changed)
+            if ($call->getElevator() === $this) {
+                $call->setElevator(null);
+            }
+        }
+
+        return $this;
     }
 }
