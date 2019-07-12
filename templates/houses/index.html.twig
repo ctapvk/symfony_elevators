@@ -12,10 +12,10 @@
     <table class="table">
         <tr>
             {# sorting of properties based on query components #}
-            <th>{{ knp_pagination_sortable(pagination, 'Id', 'a.id') }}</th>
-            <th{% if pagination.isSorted('a.name') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'name', 'a.name') }}</th>
-            <th{% if pagination.isSorted('a.Floors') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Floors', 'a.Floors') }}</th>
-            <th>actions</th>
+            <th>{{ knp_pagination_sortable(pagination, '№', 'a.id') }}</th>
+            <th{% if pagination.isSorted('a.name') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Название', 'a.name') }}</th>
+            <th{% if pagination.isSorted('a.Floors') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Этажей', 'a.Floors') }}</th>
+            <th>Действия</th>
         </tr>
 
         {# table body #}
