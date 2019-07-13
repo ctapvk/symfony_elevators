@@ -7,22 +7,22 @@
 
     <table class="table">
         <thead>
-            <tr>
-                <th>№</th>
-                <th>Название</th>
-                <th>Статус</th>
-                <th>На каком этаже</th>
-                <th>В каком доме</th>
-                <th>этажей в доме</th>
-                <th>Действия</th>
-            </tr>
+        <tr>
+            <th>№</th>
+            <th>Название</th>
+            <th>Статус</th>
+            <th>На каком этаже</th>
+            <th>В каком доме</th>
+            <th>этажей в доме</th>
+            <th>Действия</th>
+        </tr>
         </thead>
         <tbody>
         {% for elevator in elevators %}
             <tr>
                 <td>{{ elevator.id }}</td>
                 <td>{{ elevator.name }}</td>
-                <td>{{ elevator.status }}</td>
+                <td>{% include '/elevator_status.twig' %}</td>
                 <td>{{ elevator.position }}</td>
                 <td>{{ elevator.house.name }}</td>
                 <td>{{ elevator.house.floors }}</td>

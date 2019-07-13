@@ -69,14 +69,7 @@
         {% for elevator in  elevators %}
             <tr>
                 <td>{{ elevator.name }}</td>
-                <td>
-                    {% if  elevator.status==1 %}
-                        Ожидание
-                    {% endif %}
-                    {% if  elevator.status==2 %}
-                        Движется
-                    {% endif %}
-                </td>
+                <td>{% include '/elevator_status.twig' %}</td>
                 <td>{{ elevator.position }}</td>
             </tr>
         {% endfor %}

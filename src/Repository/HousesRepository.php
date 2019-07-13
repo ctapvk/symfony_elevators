@@ -47,9 +47,4 @@ class HousesRepository extends ServiceEntityRepository
         ;
     }
     */
-    public function getNoteTypeByNames()
-    {
-        return $this->createQueryBuilder('houses')
-            ->orderBy('houses.name', 'ASC');
-    }
 }

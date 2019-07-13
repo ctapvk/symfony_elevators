@@ -89,6 +89,7 @@ order by id
         $statement = $em->getConnection()->prepare($sql);
         $statement->execute();
         $calls = $statement->fetchAll();
+        if (count($calls) == 0) return [];
 
         $res = [];
         $moving = [];

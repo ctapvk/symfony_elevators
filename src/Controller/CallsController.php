@@ -7,6 +7,7 @@ use App\Entity\Elevators;
 use App\Entity\Houses;
 use App\Form\CallsType;
 use App\Repository\CallsRepository;
+use App\Repository\ElevatorsRepository;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Knp\Component\Pager\PaginatorInterface;
@@ -70,11 +71,13 @@ class CallsController extends AbstractController
     /**
      * @Route("/", name="calls_index", methods={"GET"})
      */
-    public function index(Request $request, PaginatorInterface $paginator): Response
+    public function index(Request $request, PaginatorInterface $paginator, ElevatorsRepository $elevatorsRepository): Response
     {
 
         $em = $this->container->get('doctrine')->getEntityManager();
-        $dql = "SELECT a FROM  App\Entity\Calls a order by a.id desc";
+        $where = '';
+        if ($val = $request->get('elevator_id')) $where .= " where a.elevator=$val ";
+        $dql = "SELECT a FROM  App\Entity\Calls a $where order by a.id desc";
         $query = $em->createQuery($dql);
 
         $pagination = $paginator->paginate(
@@ -85,6 +88,7 @@ class CallsController extends AbstractController
 
         return $this->render('calls/index.html.twig', [
             'pagination' => $pagination,
+            'elevators' => $elevatorsRepository->findAll(),
         ]);
     }
 
