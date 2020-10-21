@@ -27,3 +27,4 @@
 
 *.lock
 .idea
+*.log
